@@ -8,7 +8,13 @@ Shader "Unit/Test" {	//这是一个Shader 在Unity的Shader的路径应该是 Un
 
 	}
 	SubShader{			//这是一个子着色器,如果运行设备的显卡支持这个子着色器,那么就运行这个子着色器
+		
+
 		Pass {	//如果编写的是顶点-片元着色器，每个子着色器可以包含一个或者多个Pass，如果Pass所在的子着色器能够在当前CPU上运行,那么该着色器里所有的Pass都会一次执行，每个Pass的输出结果都会以指定的方式与上一步的结果进行混合，最终输出
+			Name MYFIRSTPASS	//这里定义了PASS的名字，其他地方可以通过 UsePass "Test/MYFIRSTPASS" 来复用这个Pass，unity内部会把所有Pass的名字转换为大写字母表示,因此使用UsePass命令时必须使用大写字母
+
+
+
 			CGPROGRAM	//CGPROGRAM 开头到 ENDCG 结尾这中间的部分是CG代码片段
 				#pragma vertex vert	//编译指令 告诉Unity 下面的函数 vert 包含了顶点着色器的代码，这里的vert可以换成vert1,vert2都可以，只要下面有对应名字的函数用来实现顶点着色器的功能
 				#pragma fragment frag	//编译指令 告诉Unity 下面的函数 frag 包含了片元着色器的代码，这里的frag可以换成frag1，frag2都可以，只要下面有对应名字的函数用来实现片元着色器的功能
@@ -122,4 +128,5 @@ Shader "Unit/Test" {	//这是一个Shader 在Unity的Shader的路径应该是 Un
 		}
 	}
 	Fallback "VertexLit"	//这个是保底措施,如果上面所有的子着色器都不能在当前设备运行,则运行这个着色器，是Unity内置的
+	//Fallback Off			//上面的保底措施也可以是 Fallback Off ,就是说不要保底的意思
 }
