@@ -11,7 +11,7 @@ Shader "Unit/Test" {	//这是一个Shader 在Unity的Shader的路径应该是 Un
 		
 
 		Pass {	//如果编写的是顶点-片元着色器，每个子着色器可以包含一个或者多个Pass，如果Pass所在的子着色器能够在当前CPU上运行,那么该着色器里所有的Pass都会一次执行，每个Pass的输出结果都会以指定的方式与上一步的结果进行混合，最终输出
-			Name MYFIRSTPASS	//这里定义了PASS的名字，其他地方可以通过 UsePass "Test/MYFIRSTPASS" 来复用这个Pass，unity内部会把所有Pass的名字转换为大写字母表示,因此使用UsePass命令时必须使用大写字母
+			//Name MYFIRSTPASS	//这里定义了PASS的名字，其他地方可以通过 UsePass "Test/MYFIRSTPASS" 来复用这个Pass，unity内部会把所有Pass的名字转换为大写字母表示,因此使用UsePass命令时必须使用大写字母
 
 
 
