@@ -64,6 +64,8 @@ Shader "Unity Shaders Book/Chapter 7/Ramp Texture" {
 				fixed3 diffuse = _LightColor0.rgb * diffuseColor;
 				
 				fixed3 viewDir = normalize(UnityWorldSpaceViewDir(i.worldPos));
+
+				//高光
 				fixed3 halfDir = normalize(worldLightDir + viewDir);
 				fixed3 specular = _LightColor0.rgb * _Specular.rgb * pow(max(0, dot(worldNormal, halfDir)), _Gloss);
 				
