@@ -101,4 +101,5 @@ Shader "Unlit/SpecularPixelLevel"
             ENDCG
         }
     }
+	Fallback "VertexLit"
 }
