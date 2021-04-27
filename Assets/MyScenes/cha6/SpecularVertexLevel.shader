@@ -17,6 +17,7 @@ Shader "Unlit/SpecularVertextLevel"
 			#pragma vertex vert
 			#pragma fragment frag
 			#include "Lighting.cginc"
+			#include "AutoLight.cginc"
 			fixed4 _Diffuse;
 			fixed4 _Specular;
 			float _Gloss;

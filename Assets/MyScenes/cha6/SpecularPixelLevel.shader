@@ -21,6 +21,7 @@ Shader "Unlit/SpecularPixelLevel"
 
 
 			CGPROGRAM
+			#pragma multi_compile_fwdbase	
 			#pragma vertex vert
 			#pragma fragment frag
 			// make fog work
@@ -28,6 +29,7 @@ Shader "Unlit/SpecularPixelLevel"
 
 			//#include "UnityCG.cginc"
 			#include "Lighting.cginc"
+			#include "AutoLight.cginc"
 
 			fixed4 _Diffuse;
 			fixed4 _Specular;
@@ -45,6 +47,9 @@ Shader "Unlit/SpecularPixelLevel"
                 float4 pos : SV_POSITION;
 				float3 worldNormal:TEXCOORD0;
 				float3 worldPos:TEXCOORD1;
+				//SHADOW_COORDS(2)
+				//unityShadowCoord4 _ShadowCoord : TEXCOORD2;
+				float4 _ShadowCoord : TEXCOORD2;
             };
 
 
@@ -63,6 +68,7 @@ Shader "Unlit/SpecularPixelLevel"
 				o.worldNormal = mul(v.normal, (float3x3)unity_WorldToObject);
 				// Transform the vertex from object spacet to world space
 				o.worldPos = mul(unity_ObjectToWorld, v.vertex).xyz;
+				TRANSFER_SHADOW(o);
 				return o;
             }
 
@@ -81,25 +87,49 @@ Shader "Unlit/SpecularPixelLevel"
 				return fixed4(ambient + diffuse + specular, 1.0);*/
 				fixed3 ambient = UNITY_LIGHTMODEL_AMBIENT.xyz;
 
-			fixed3 worldNormal = normalize(i.worldNormal);
-			fixed3 worldLightDir = normalize(_WorldSpaceLightPos0.xyz);
+				fixed3 worldNormal = normalize(i.worldNormal);
+				fixed3 worldLightDir = normalize(_WorldSpaceLightPos0.xyz);
 
-			// Compute diffuse term
-			fixed3 diffuse = _LightColor0.rgb * _Diffuse.rgb * saturate(dot(worldNormal, worldLightDir));
+				// Compute diffuse term
+				fixed3 diffuse = _LightColor0.rgb * _Diffuse.rgb * saturate(dot(worldNormal, worldLightDir));
 
-			// Get the reflect direction in world space
-			fixed3 reflectDir = normalize(reflect(-worldLightDir, worldNormal));
-			// Get the view direction in world space
-			fixed3 viewDir = normalize(_WorldSpaceCameraPos.xyz - i.worldPos.xyz);
-			// Compute specular term
-			fixed3 specular = _LightColor0.rgb * _Specular.rgb * pow(saturate(dot(reflectDir, viewDir)), _Gloss);
+				// Get the reflect direction in world space
+				fixed3 reflectDir = normalize(reflect(-worldLightDir, worldNormal));
+				// Get the view direction in world space
+				fixed3 viewDir = normalize(_WorldSpaceCameraPos.xyz - i.worldPos.xyz);
+				// Compute specular term
+				fixed3 specular = _LightColor0.rgb * _Specular.rgb * pow(saturate(dot(reflectDir, viewDir)), _Gloss);
 
-			return fixed4(ambient + diffuse + specular, 1.0);
+				fixed shadow = SHADOW_ATTENUATION(i);
+
+				//return fixed4(1,1,1,1);
+				return fixed4(ambient + diffuse * shadow + specular * shadow, 1.0);
 
 
             }
             ENDCG
         }
+		Pass {
+			Name "ShadowCaster"
+			Tags {"LightMode" = "ShadowCaster"}
+			CGPROGRAM
+			#pragma vertex vert
+			#pragma fragment frag
+			#pragma multi_compile_shadowcaster
+			#include "UnityCG.cginc"
+			struct v2f {
+				V2F_SHADOW_CASTER;
+			};
+			v2f vert(appdata_base v){
+				v2f o;
+				TRANSFER_SHADOW_CASTER_NORMALOFFSET(o)
+				return o;
+			}
+			float4 frag(v2f i):SV_Target{
+				SHADOW_CASTER_FRAGMENT(i)
+			}
+			ENDCG
+		}
     }
-	Fallback "VertexLit"
+	//Fallback "VertexLit"
 }
