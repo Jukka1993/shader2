@@ -4,7 +4,7 @@ Shader "Unlit/cha8_4_blend"
 {
     Properties
     {
-        _MainTex ("Texture", 2D) = "white" {}
+        _MainTex223 ("Texture", 2D) = "white" {}
         _Color("Color", Color) = (1.0, 1.0, 1.0, 1.0)
         _AlphaScale ("Alpha Scale", Range(0,1))= 1
     }
@@ -39,8 +39,8 @@ Shader "Unlit/cha8_4_blend"
                 float3 worldPos:TEXCOORD2;
             };
 
-            sampler2D _MainTex;
-            float4 _MainTex_ST;
+            sampler2D _MainTex223;
+            float4 _MainTex223_ST;
             float _AlphaScale;
             float4 _Color;
 
@@ -48,7 +48,7 @@ Shader "Unlit/cha8_4_blend"
             {
                 v2f o;
                 o.vertex = UnityObjectToClipPos(v.vertex);
-                o.uv = TRANSFORM_TEX(v.texcoord, _MainTex);
+                o.uv = TRANSFORM_TEX(v.texcoord, _MainTex223);
                 o.worldNormal = UnityObjectToWorldNormal(v.normal).xyz;
                 o.worldPos = mul(unity_ObjectToWorld, v.vertex).xyz;
                 return o;
@@ -56,7 +56,7 @@ Shader "Unlit/cha8_4_blend"
 
             fixed4 frag (v2f i) : SV_Target
             {
-                fixed4 col = tex2D(_MainTex, i.uv);
+                fixed4 col = tex2D(_MainTex223, i.uv);
                 fixed3 albedo = _Color.rgb * col.rgb;
                 fixed3 ambient = UNITY_LIGHTMODEL_AMBIENT.xyz * albedo;
                 fixed3 worldNormal = normalize(i.worldNormal);
